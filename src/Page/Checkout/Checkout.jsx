@@ -1,13 +1,13 @@
 import React, { useContext, useState } from "react";
 import { RiDeleteBin5Line } from "react-icons/ri";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { CartContext } from "../../ContextAPIs/CartProvider";
-import axios from "axios";
 import { toast } from "react-toastify";
 
 const Checkout = () => {
   const { cart, removeFromCart, increaseQuantity, decreaseQuantity } =
     useContext(CartContext);
+  const navigate = useNavigate();
   const location = useLocation();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -72,6 +72,10 @@ const Checkout = () => {
 
     const result = await response.json();
     toast.success(result.message);
+
+    navigate("/order-details", {
+      state: { orderDetails: result.coursePurchaseData },
+    });
   };
 
   return (
