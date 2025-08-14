@@ -1,16 +1,28 @@
 /* eslint-disable react/react-in-jsx-scope */
 import { useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { CartContext } from "../../ContextAPIs/CartProvider";
+import { LoaderContext } from "../../ContextAPIs/LoaderProvider";
 
 const Cart = () => {
+  const navigate = useNavigate();
+  const { showLoader, hideLoader } = useContext(LoaderContext);
   const { cart } = useContext(CartContext);
   const totalPrice = cart.reduce(
     (sum, course) => sum + course.discount_price * (course.quantity || 1),
     0
   );
+
+  const handleCheckout = () => {
+    if (cart.length === 0) return;
+    showLoader();
+    setTimeout(() => {
+      navigate("/checkout", { state: { cart, totalPrice } });
+      hideLoader();
+    }, 1000);
+  };
 
   return (
     <div className="m-mt_16px">
@@ -120,13 +132,18 @@ const Cart = () => {
                 <p className="text-black font-bold">{totalPrice}</p>
               </div>
 
-              <Link
-                to={`/checkout`}
-                state={{ cart, totalPrice }}
-                className="font-medium text-black mb-2 border-2 hover:bg-[#D2C5A2] duration-300 py-2 px-4  block text-center mx-auto w-full"
+              <button
+                disabled={cart.length === 0}
+                onClick={handleCheckout} // small delay to show loader
+                className={`font-medium text-black mb-2 border-2 py-2 px-4 block text-center mx-auto w-full 
+    ${
+      cart.length === 0
+        ? "bg-gray-300 cursor-not-allowed"
+        : "hover:bg-[#D2C5A2] bg-white"
+    }`}
               >
                 PROCEED TO CHECKOUT
-              </Link>
+              </button>
             </div>
           </div>
         </div>
