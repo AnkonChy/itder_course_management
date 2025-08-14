@@ -1,9 +1,11 @@
-import { Link, useLoaderData } from "react-router-dom";
+import { useLoaderData } from "react-router-dom";
 import { TbCoinTaka } from "react-icons/tb";
-import { SiGoogleclassroom } from "react-icons/si";
+import { useContext } from "react";
+import { CartContext } from "../../ContextAPIs/CartProvider";
 
 const Courses = () => {
   const { courseData } = useLoaderData();
+  const { addToCart } = useContext(CartContext);
   console.log(courseData);
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 p-10 gap-6">
@@ -65,18 +67,16 @@ const Courses = () => {
             </div>
           </div>
 
-          <Link
-            to={`/featuresDetails/${course?._id}`}
-            className="flex justify-center mb-4"
-          >
-            {/* <CustomButtons primaryText={"See Details"}></CustomButtons> */}
-            {/* <button>See details</button> */}
+          <div className="flex justify-center mb-4">
             <div className="gap-3 flex text-base mt-4">
-              <button className="px-4 py-2 hover:bg-[#352b61] bg-[#603186] text-white duration-500">
+              <button
+                onClick={() => addToCart(course)}
+                className="px-4 py-2 hover:bg-[#352b61] bg-[#603186] text-white duration-500"
+              >
                 Add To Cart
               </button>
             </div>
-          </Link>
+          </div>
         </div>
       ))}
     </div>
