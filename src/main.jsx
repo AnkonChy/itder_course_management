@@ -12,19 +12,25 @@ import BasicProvider from "./ContextAPIs/BasicProvider.jsx";
 import "aos/dist/aos.css";
 import CartProvider from "./ContextAPIs/CartProvider.jsx";
 import { Toaster } from "react-hot-toast";
+import { LoaderProvider } from "./ContextAPIs/LoaderProvider.jsx";
+import Loader from "./Components/Loader.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <>
-    <ToastContainer />
+ <>
+  <ToastContainer />
+  <LoaderProvider> {/* Global Loader Provider */}
     <QueryClientProvider client={queryClient}>
       <OrderProvider>
         <BasicProvider>
           <CartProvider>
+            <Loader /> {/* Global Loader component */}
             <RouterProvider router={Router} />
             <Toaster position="top-center" />
           </CartProvider>
         </BasicProvider>
       </OrderProvider>
     </QueryClientProvider>
-  </>
+  </LoaderProvider>
+</>
+
 );

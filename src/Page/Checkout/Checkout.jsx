@@ -3,10 +3,12 @@ import { RiDeleteBin5Line } from "react-icons/ri";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { CartContext } from "../../ContextAPIs/CartProvider";
 import { toast } from "react-toastify";
+import { LoaderContext } from "../../ContextAPIs/LoaderProvider";
 
 const Checkout = () => {
   const { cart, removeFromCart, increaseQuantity, decreaseQuantity } =
     useContext(CartContext);
+  const { showLoader, hideLoader } = useContext(LoaderContext);
   const navigate = useNavigate();
   const location = useLocation();
   const [name, setName] = useState("");
@@ -39,43 +41,51 @@ const Checkout = () => {
 
   const handleAdd = async (e) => {
     e.preventDefault();
+    try {
+      showLoader(); // Loader start
 
-    const data = new FormData();
-    data.append("course_id", course_id);
-    data.append("admission_date", admission_date);
-    if (photoFile) data.append("photo", photoFile);
-    data.append("name", name);
-    data.append("father_name", parentName);
-    data.append("father_phone_no", parentNumber);
-    data.append("school_collage_name", schoolName);
-    data.append("job_title", jobTitle);
-    data.append("email", email);
-    data.append("gender", gender);
-    data.append("present_address", presentAddress);
-    data.append("permanent_address", permanentAddress);
-    data.append("nid_no", nidNo);
-    data.append("phone_no", phoneNo);
-    data.append("local_guardian_name", localGuardianName);
-    data.append("local_guardian_phone_no", localGuardianPhone);
-    data.append("date_of_birth", dob);
-    data.append("blood_group", bloodGroup);
-    data.append("course_fee", course_fee);
-    data.append("course_qty", course_qty);
-    data.append("total_course_fee", total_course_fee);
-    data.append("discount_course_fee", discount_course_fee);
-    data.append("sub_total_course_fee", sub_total_course_fee);
+      const data = new FormData();
+      data.append("course_id", course_id);
+      data.append("admission_date", admission_date);
+      if (photoFile) data.append("photo", photoFile);
+      data.append("name", name);
+      data.append("father_name", parentName);
+      data.append("father_phone_no", parentNumber);
+      data.append("school_collage_name", schoolName);
+      data.append("job_title", jobTitle);
+      data.append("email", email);
+      data.append("gender", gender);
+      data.append("present_address", presentAddress);
+      data.append("permanent_address", permanentAddress);
+      data.append("nid_no", nidNo);
+      data.append("phone_no", phoneNo);
+      data.append("local_guardian_name", localGuardianName);
+      data.append("local_guardian_phone_no", localGuardianPhone);
+      data.append("date_of_birth", dob);
+      data.append("blood_group", bloodGroup);
+      data.append("course_fee", course_fee);
+      data.append("course_qty", course_qty);
+      data.append("total_course_fee", total_course_fee);
+      data.append("discount_course_fee", discount_course_fee);
+      data.append("sub_total_course_fee", sub_total_course_fee);
 
-    const response = await fetch("https://itder.com/api/course-purchase", {
-      method: "POST",
-      body: data,
-    });
+      const response = await fetch("https://itder.com/api/course-purchase", {
+        method: "POST",
+        body: data,
+      });
 
-    const result = await response.json();
-    toast.success(result.message);
+      const result = await response.json();
 
-    navigate("/order-details", {
-      state: { orderDetails: result.coursePurchaseData },
-    });
+      toast.success(result.message);
+
+      navigate("/order-details", {
+        state: { orderDetails: result.coursePurchaseData },
+      });
+    } catch (error) {
+      toast.error("Something went wrong!");
+    } finally {
+      hideLoader(); // Loader stop
+    }
   };
 
   return (
