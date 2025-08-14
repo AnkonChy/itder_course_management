@@ -1,57 +1,86 @@
-
+import { Link, useLoaderData } from "react-router-dom";
+import { TbCoinTaka } from "react-icons/tb";
+import { SiGoogleclassroom } from "react-icons/si";
 
 const Courses = () => {
-    return (
-        <div className="m-mt_16px">
-          
-
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-
-    
-
-                    <div className=" bg-white shadow-lg rounded-lg overflow-hidden">
-                        <div className="relative">
-                            <img src='https://itderbd.nextwebservice.com/storage/uploads/course/7674951728743412.jpg' alt="" />
-                            <div className="absolute top-0 left-0 p-2">
-                                <h3 className="text-white text-xl font-bold">Data Entry</h3>
-                            </div>
-                        </div>
-                        <div className="p-4">
-                            <h2 className="text-gray-800 text-lg font-semibold mb-2">Course name from Api</h2>
-                            <div className="flex items-center justify-between mb-4">
-
-                                <span className="flex text-blue-500 text-md">★★★★★(no need to change)</span>
-                                <span className="ml-2 text-gray-600 text-md font-bold">Triner name from Api</span>
-                            </div>
-                            {/* <div className="flex gap-2 mb-4 flex-wrap">
-                                {['Photography', 'Light set up', 'Camera angle', 'Self Development'].map((tag) => (
-                                    <span key={tag} className="bg-yellow-100 text-gray-700 text-xs font-semibold px-2 py-1 rounded">
-                                        {tag}
-                                    </span>
-                                ))}
-                            </div> */}
-                            <p className="text-gray-600 text-md mb-4">
-                           Course Details <span className="text-blue-500">Show Details(no need to change)</span>
-                            </p>
-                            <hr />
-                            <div className="mt-4 flex justify-between items-center">
-                                <div>
-                                    <span className="line-through text-gray-400 text-sm">Tk 800 (regular price from Api)</span>
-                                    <span className="text-green-600 text-md font-bold ml-2">-70% (calculate from regular-discount price)</span>
-                                    <span className="text-black text-lg font-bold ml-2">Tk 240( discount price from Api)</span>
-                                </div>
-                                {/* <span className="text-green-600 text-sm">Earn Tk 48</span> */}
-                            </div>
-                            <div className="mt-4 flex gap-2">
-                                <button className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-500 w-full font-bold text-md">Add To Cart</button>
-
-                            </div>
-                        </div>
-                    </div>
-
+  const { courseData } = useLoaderData();
+  console.log(courseData);
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-4 p-10 gap-6">
+      {courseData.map((course) => (
+        <div
+          key={course?._id}
+          className=" flex flex-col h-full hover:scale-105 rounded-lg shadow-md transition-all duration-700"
+        >
+          <figure>
+            <img
+              className="rounded-t-lg w-full h-56 object-cover"
+              src={course?.photo}
+              alt="Virtual Classroom"
+            />
+          </figure>
+          <div className="px-4 py-3 space-y-2 flex-grow">
+            <div className="flex items-center gap-2">
+              <h2 className="font-semibold text-2xl">{course?.course_name}</h2>
             </div>
+            <p className="text-gray-600 mt-2">{course?.shortDescription}</p>
+            <div className="flex items-center justify-between pb-2">
+              <div>
+                <p className="font-semibold">
+                  Trainer: {course?.trainer_data?.name}
+                </p>
+              </div>
+              <div>
+                <button className="text-xs font-bold px-6 py-1 rounded-full bg-blue-200 my-shadow">
+                  <span className="font-semibold">{course?.status}</span>
+                </button>
+              </div>
+            </div>
+            <hr className=" border-t-2 border-gray-300 pt-2" />
+
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-1">
+                <TbCoinTaka className="text-xl" />
+                <p className="text-base font-semibold text-gray-500 line-through">
+                  {course?.regular_price}
+                </p>
+              </div>
+              <div className="flex items-center gap-1">
+                <TbCoinTaka className="text-xl" />
+                <p className="text-lg font-bold text-[#603186]">
+                  {course?.discount_price}
+                </p>
+              </div>
+
+              {course?.regular_price && course?.discount_price && (
+                <span className="bg-red-100 text-red-600 text-sm font-semibold px-2 py-0.5 rounded-full">
+                  {Math.round(
+                    ((course?.regular_price - course?.discount_price) /
+                      course?.regular_price) *
+                      100
+                  )}
+                  % OFF
+                </span>
+              )}
+            </div>
+          </div>
+
+          <Link
+            to={`/featuresDetails/${course?._id}`}
+            className="flex justify-center mb-4"
+          >
+            {/* <CustomButtons primaryText={"See Details"}></CustomButtons> */}
+            {/* <button>See details</button> */}
+            <div className="gap-3 flex text-base mt-4">
+              <button className="px-4 py-2 hover:bg-[#352b61] bg-[#603186] text-white duration-500">
+                Add To Cart
+              </button>
+            </div>
+          </Link>
         </div>
-    );
+      ))}
+    </div>
+  );
 };
 
 export default Courses;
