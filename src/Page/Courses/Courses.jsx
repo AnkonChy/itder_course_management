@@ -2,6 +2,7 @@ import { useLoaderData } from "react-router-dom";
 import { TbCoinTaka } from "react-icons/tb";
 import { useContext } from "react";
 import { CartContext } from "../../ContextAPIs/CartProvider";
+import { FaUsers } from "react-icons/fa";
 
 const Courses = () => {
   const { courseData } = useLoaderData();
@@ -16,7 +17,7 @@ const Courses = () => {
         >
           <figure>
             <img
-              className="rounded-t-lg w-full h-56 object-cover"
+              className="rounded-t-lg w-full h-56 object-cover flex"
               src={course?.photo}
               alt="Virtual Classroom"
             />
@@ -33,9 +34,9 @@ const Courses = () => {
                 </p>
               </div>
               <div>
-                <button className="text-xs font-bold px-6 py-1 rounded-full bg-blue-200 my-shadow">
-                  <span className="font-semibold">{course?.status}</span>
-                </button>
+                <span className="flex items-center bg-orange-100 text-orange-800 gap-1 p-2 rounded-3xl">
+                  <FaUsers className="text-lg" /> <p>7 seats left</p>
+                </span>
               </div>
             </div>
             <hr className=" border-t-2 border-gray-300 pt-2" />

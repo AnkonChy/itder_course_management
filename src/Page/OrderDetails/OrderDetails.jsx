@@ -18,7 +18,7 @@ const OrderDetails = () => {
           <div className="w-full border flex flex-col md:flex-row md:items-start   md:mt-4 mt-3 bg-[#D2C5A2] rounded-md p-4  ">
             <div className="md:text-base text-sm flex-1  font-semibold   md:border-r-2 md:border-black md:pr-10">
               <p className="font-bold md:mb-4 w-full">
-                Demo information,Checkout page information will be here{" "}
+                Your admission details are listed below for confirmation
               </p>
               <div className="space-y-1 w-full">
                 <div className="flex items-center justify-between">
@@ -52,7 +52,7 @@ const OrderDetails = () => {
 
             <div className="md:text-base text-sm  flex-1 font-semibold  md:ml-10 mt-m_medium">
               <p className="font-bold  md:mb-4 w-full">
-                Demo information,Checkout page information will be here{" "}
+                Your admission details are listed below for confirmation
               </p>
               <div className="space-y-1 w-full">
                 <div className="flex items-center justify-between">
@@ -113,12 +113,15 @@ const OrderDetails = () => {
                   <td className="border text-center w-10 h-12 px-2">
                     <img
                       className=" w-full h-full object-cover mx-auto"
-                      src=""
+                      src={
+                        orderDetails &&
+                        "https://www.itder.com/storage/uploads/course/2739851751264879.png"
+                      }
                       alt=""
                     />
                   </td>
                   <td className="lg:py-6 md:py-4 py-2 text-center border">
-                    
+                    {orderDetails && "English Writing"}
                   </td>
                   <td className="lg:py-6 md:py-4 py-2 text-center border">
                     {orderDetails?.name}
