@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { Link, useLocation } from "react-router-dom";
 import { CartContext } from "../../ContextAPIs/CartProvider";
+import axios from "axios";
 
 const Checkout = () => {
   const { cart, removeFromCart, increaseQuantity, decreaseQuantity } =
@@ -22,31 +23,68 @@ const Checkout = () => {
   const [guardianName, setGuardianName] = useState("");
   const [dob, setDob] = useState("");
   const [bloodGroup, setBloodGroup] = useState("");
-  const { cart, totalPrice } = location.state || {};
+  const [photoFile, setPhotoFile] = useState(null);
 
-  const handleAdd = (e) => {
+  const { totalPrice } = location.state || {};
+
+  const handleAdd = async (e) => {
     e.preventDefault();
-    const formData = {
-      fullName,
-      formNo,
-      parentName,
-      parentNumber,
-      school,
-      jobInfo,
+
+    // Prepare all values in an object
+    const data = {
+      course_id: "2",
+      admission_date: Date.now(),
+      photo: photoFile, // file object
+      name: fullName,
+      father_name: parentName,
+      father_phone_no: parentNumber,
+      school_collage_name: school,
+      job_title: jobInfo,
       email,
       gender,
-      presentAddress,
-      permanentAddress,
-      nid,
-      mobile,
-      guardianName,
-      dob,
-      bloodGroup,
+      present_address: presentAddress,
+      permanent_address: permanentAddress,
+      nid_no: nid,
+      phone_no: mobile,
+      local_guardian_name: guardianName,
+      local_guardian_phone_no: "",
+      date_of_birth: dob,
+      blood_group: bloodGroup,
+      course_fee: cart.reduce((sum, c) => sum + c.regular_price, 0).toString(),
+      course_qty: cart.reduce((sum, c) => sum + (c.quantity || 1), 0),
+      total_course_fee: cart
+        .reduce((sum, c) => sum + c.regular_price, 0)
+        .toString(),
+      discount_course_fee: cart
+        .reduce((sum, c) => sum + c.discount_price, 0)
+        .toString(),
+      sub_total_course_fee: cart
+        .reduce((sum, c) => sum + c.discount_price * (c.quantity || 1), 0)
+        .toString(),
     };
 
-    console.log("Form Data:", formData);
-    console.log("Cart Items:", cart);
+    // Create FormData dynamically
+    const formData = new FormData();
+    Object.keys(data).forEach((key) => {
+      if (data[key] !== null && data[key] !== undefined) {
+        formData.append(key, data[key]);
+      }
+    });
+
+    try {
+      const response = await axios.post(
+        "https://itder.com/api/course-purchase",
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+      console.log("Purchase successful:", response.data);
+      alert("Purchase Successful!");
+    } catch (error) {
+      console.error("Purchase failed:", error.response?.data || error.message);
+      alert("Purchase failed! Check console for details.");
+    }
   };
+
   return (
     <div className="  mt-5 border mx-2">
       <div class="bg-[#6f42c1] text-white p-6 text-center mb-5">
@@ -208,7 +246,7 @@ const Checkout = () => {
               </label>
               <textarea
                 id="permanentAddress"
-                onChange={(e) => setPresentAddress(e.target.value)}
+                onChange={(e) => setPermanentAddress(e.target.value)}
                 className="w-full border border-gray-300 rounded-md p-2"
               />
             </div>
@@ -301,6 +339,21 @@ const Checkout = () => {
                 <option value="O+">O+</option>
                 <option value="O-">O-</option>
               </select>
+            </div>
+            <div className="mb-4">
+              <label
+                htmlFor="photo"
+                className="block font-semibold text-base mb-2"
+              >
+                Upload Photo:
+              </label>
+              <input
+                type="file"
+                id="photo"
+                accept="image/*"
+                onChange={(e) => setPhotoFile(e.target.files[0])} // store the selected file
+                className="w-full border border-gray-300 rounded-md p-2"
+              />
             </div>
           </div>
         </div>
@@ -420,12 +473,12 @@ const Checkout = () => {
                     <p className="text-black font-bold">{totalPrice} BDT</p>
                   </div>
 
-                  <Link
-                    state={"bdt"}
-                    className="font-medium text-black mb-2 border-2 hover:bg-[#D2C5A2] duration-300 py-2 px-4  block text-center mx-auto w-full"
+                  <button
+                    type="submit"
+                    className="mt-4 w-full bg-purple-600 text-white py-2 rounded-md"
                   >
                     Submit
-                  </Link>
+                  </button>
                 </div>
               </div>
             </div>

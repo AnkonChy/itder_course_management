@@ -11,6 +11,7 @@ const CartProvider = ({ children }) => {
       return;
     }
     setCart([...cart, course]);
+    toast.success('Added course in cart')
   };
 
   return (
