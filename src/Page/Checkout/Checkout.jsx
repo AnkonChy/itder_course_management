@@ -3,122 +3,212 @@ import { RiDeleteBin5Line } from "react-icons/ri";
 import { Link, useLocation } from "react-router-dom";
 import { CartContext } from "../../ContextAPIs/CartProvider";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const Checkout = () => {
   const { cart, removeFromCart, increaseQuantity, decreaseQuantity } =
     useContext(CartContext);
   const location = useLocation();
-  const [fullName, setFullName] = useState("");
-  const [formNo, setFormNo] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNo, setPhoneNo] = useState("");
   const [parentName, setParentName] = useState("");
   const [parentNumber, setParentNumber] = useState("");
-  const [school, setSchool] = useState("");
-  const [jobInfo, setJobInfo] = useState("");
-  const [email, setEmail] = useState("");
-  const [gender, setGender] = useState("");
+  const [schoolName, setSchoolName] = useState("");
+  const [jobTitle, setJobTitle] = useState("");
+  const [localGuardianName, setLocalGuardianName] = useState("");
+  const [localGuardianPhone, setLocalGuardianPhone] = useState("");
+  const [nidNo, setNidNo] = useState("");
+  const [dob, setDob] = useState("");
   const [presentAddress, setPresentAddress] = useState("");
   const [permanentAddress, setPermanentAddress] = useState("");
-  const [nid, setNid] = useState("");
-  const [mobile, setMobile] = useState("");
-  const [guardianName, setGuardianName] = useState("");
-  const [dob, setDob] = useState("");
+  const [gender, setGender] = useState("");
   const [bloodGroup, setBloodGroup] = useState("");
   const [photoFile, setPhotoFile] = useState(null);
-
+  const course_id = "2";
+  const course_fee = "4500";
+  const course_qty = cart.length;
+  const total_course_fee = cart.reduce(
+    (acc, current) => acc + Number(current.regular_price),
+    0
+  );
+  const admission_date = Date.now().toLocaleString();
+  const discount_course_fee = "4500";
+  const sub_total_course_fee = "4500";
   const { totalPrice } = location.state || {};
 
   const handleAdd = async (e) => {
     e.preventDefault();
 
-    // Prepare all values in an object
-    const data = {
-      course_id: "2",
-      admission_date: Date.now(),
-      photo: photoFile, // file object
-      name: fullName,
-      father_name: parentName,
-      father_phone_no: parentNumber,
-      school_collage_name: school,
-      job_title: jobInfo,
-      email,
-      gender,
-      present_address: presentAddress,
-      permanent_address: permanentAddress,
-      nid_no: nid,
-      phone_no: mobile,
-      local_guardian_name: guardianName,
-      local_guardian_phone_no: "",
-      date_of_birth: dob,
-      blood_group: bloodGroup,
-      course_fee: cart.reduce((sum, c) => sum + c.regular_price, 0).toString(),
-      course_qty: cart.reduce((sum, c) => sum + (c.quantity || 1), 0),
-      total_course_fee: cart
-        .reduce((sum, c) => sum + c.regular_price, 0)
-        .toString(),
-      discount_course_fee: cart
-        .reduce((sum, c) => sum + c.discount_price, 0)
-        .toString(),
-      sub_total_course_fee: cart
-        .reduce((sum, c) => sum + c.discount_price * (c.quantity || 1), 0)
-        .toString(),
-    };
+    const data = new FormData();
+    data.append("course_id", course_id);
+    data.append("admission_date", admission_date);
+    if (photoFile) data.append("photo", photoFile);
+    data.append("name", name);
+    data.append("father_name", parentName);
+    data.append("father_phone_no", parentNumber);
+    data.append("school_collage_name", schoolName);
+    data.append("job_title", jobTitle);
+    data.append("email", email);
+    data.append("gender", gender);
+    data.append("present_address", presentAddress);
+    data.append("permanent_address", permanentAddress);
+    data.append("nid_no", nidNo);
+    data.append("phone_no", phoneNo);
+    data.append("local_guardian_name", localGuardianName);
+    data.append("local_guardian_phone_no", localGuardianPhone);
+    data.append("date_of_birth", dob);
+    data.append("blood_group", bloodGroup);
+    data.append("course_fee", course_fee);
+    data.append("course_qty", course_qty);
+    data.append("total_course_fee", total_course_fee);
+    data.append("discount_course_fee", discount_course_fee);
+    data.append("sub_total_course_fee", sub_total_course_fee);
 
-    // Create FormData dynamically
-    const formData = new FormData();
-    Object.keys(data).forEach((key) => {
-      if (data[key] !== null && data[key] !== undefined) {
-        formData.append(key, data[key]);
-      }
+    const response = await fetch("https://itder.com/api/course-purchase", {
+      method: "POST",
+      body: data,
     });
 
-    try {
-      const response = await axios.post(
-        "https://itder.com/api/course-purchase",
-        formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
-      console.log("Purchase successful:", response.data);
-      alert("Purchase Successful!");
-    } catch (error) {
-      console.error("Purchase failed:", error.response?.data || error.message);
-      alert("Purchase failed! Check console for details.");
-    }
+    const result = await response.json();
+    toast.success(result.message);
   };
 
   return (
-    <div className="  mt-5 border mx-2">
-      <div class="bg-[#6f42c1] text-white p-6 text-center mb-5">
+    <div className="mt-5 border mx-2">
+      <div className="bg-[#6f42c1] text-white p-6 text-center mb-5">
         <h2 className="text-5xl font-bold">Trainee Admission Form</h2>
       </div>
       <form onSubmit={handleAdd} className="bg-white shadow-md rounded-lg p-6">
-        {/* Trainee Information Section */}
         <div className="form-section">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             <div>
               <label
-                htmlFor="fullName"
+                htmlFor="name"
                 className="block font-semibold text-base mb-2"
               >
-                Full Name:
+                Name:
               </label>
               <input
+                required
                 type="text"
-                id="fullName"
-                onChange={(e) => setFullName(e.target.value)}
+                onChange={(e) => setName(e.target.value)}
                 className="w-full border border-gray-300 rounded-md p-2"
               />
             </div>
             <div>
               <label
-                htmlFor="formNo"
+                htmlFor="email"
                 className="block font-semibold text-base mb-2"
               >
-                Form no:
+                Email:
               </label>
               <input
+                required
                 type="text"
-                id="formNo"
-                onChange={(e) => setFormNo(e.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full border border-gray-300 rounded-md p-2"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="phoneNo"
+                className="block font-semibold text-base mb-2"
+              >
+                Phone No:
+              </label>
+              <input
+                required
+                type="text"
+                onChange={(e) => setPhoneNo(e.target.value)}
+                className="w-full border border-gray-300 rounded-md p-2"
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div>
+              <label
+                htmlFor="parentName"
+                className="block font-semibold text-base mb-2"
+              >
+                Father / Mother Name:
+              </label>
+              <input
+                required
+                type="text"
+                onChange={(e) => setParentName(e.target.value)}
+                className="w-full border border-gray-300 rounded-md p-2"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="name"
+                className="block font-semibold text-base mb-2"
+              >
+                Father / Mother Phone No:
+              </label>
+              <input
+                required
+                type="text"
+                onChange={(e) => setParentNumber(e.target.value)}
+                className="w-full border border-gray-300 rounded-md p-2"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="name"
+                className="block font-semibold text-base mb-2"
+              >
+                School / College Name:
+              </label>
+              <input
+                required
+                type="text"
+                onChange={(e) => setSchoolName(e.target.value)}
+                className="w-full border border-gray-300 rounded-md p-2"
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div>
+              <label
+                htmlFor="parentName"
+                className="block font-semibold text-base mb-2"
+              >
+                Job Title
+              </label>
+              <input
+                required
+                type="text"
+                onChange={(e) => setJobTitle(e.target.value)}
+                className="w-full border border-gray-300 rounded-md p-2"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="name"
+                className="block font-semibold text-base mb-2"
+              >
+                Local Guardian Name
+              </label>
+              <input
+                required
+                type="text"
+                onChange={(e) => setLocalGuardianName(e.target.value)}
+                className="w-full border border-gray-300 rounded-md p-2"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="name"
+                className="block font-semibold text-base mb-2"
+              >
+                Local Guardian Phone
+              </label>
+              <input
+                required
+                type="text"
+                onChange={(e) => setLocalGuardianPhone(e.target.value)}
                 className="w-full border border-gray-300 rounded-md p-2"
               />
             </div>
@@ -130,12 +220,13 @@ const Checkout = () => {
                 htmlFor="parentName"
                 className="block font-semibold text-base mb-2"
               >
-                Father/Mother Name:
+                NID No
               </label>
               <input
+                required
                 type="text"
                 id="parentName"
-                onChange={(e) => setParentName(e.target.value)}
+                onChange={(e) => setNidNo(e.target.value)}
                 className="w-full border border-gray-300 rounded-md p-2"
               />
             </div>
@@ -144,12 +235,13 @@ const Checkout = () => {
                 htmlFor="parentNumber"
                 className="block font-semibold text-base mb-2"
               >
-                Number:
+                Date of Birth
               </label>
               <input
-                type="text"
+                required
+                type="date"
                 id="parentNumber"
-                onChange={(e) => setParentNumber(e.target.value)}
+                onChange={(e) => setDob(e.target.value)}
                 className="w-full border border-gray-300 rounded-md p-2"
               />
             </div>
@@ -161,12 +253,13 @@ const Checkout = () => {
                 htmlFor="school"
                 className="block font-semibold text-base mb-2"
               >
-                School/College:
+                Present Address
               </label>
               <input
+                required
                 type="text"
                 id="school"
-                onChange={(e) => setSchool(e.target.value)}
+                onChange={(e) => setPresentAddress(e.target.value)}
                 className="w-full border border-gray-300 rounded-md p-2"
               />
             </div>
@@ -175,32 +268,19 @@ const Checkout = () => {
                 htmlFor="jobInfo"
                 className="block font-semibold text-base mb-2"
               >
-                Job Information:
+                Permanent Address
               </label>
               <input
+                required
                 type="text"
                 id="jobInfo"
-                onChange={(e) => setJobInfo(e.target.value)}
+                onChange={(e) => setPermanentAddress(e.target.value)}
                 className="w-full border border-gray-300 rounded-md p-2"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div>
-              <label
-                htmlFor="email"
-                className="block font-semibold text-base mb-2"
-              >
-                Email:
-              </label>
-              <input
-                type="email"
-                id="email"
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full border border-gray-300 rounded-md p-2"
-              />
-            </div>
             <div>
               <label
                 htmlFor="gender"
@@ -212,6 +292,7 @@ const Checkout = () => {
                 id="gender"
                 onChange={(e) => setGender(e.target.value)}
                 className="w-full border border-gray-300 rounded-md p-2"
+                required
               >
                 <option value="" disabled selected>
                   Select Gender
@@ -221,100 +302,6 @@ const Checkout = () => {
                 <option value="Others">Other</option>
               </select>
             </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div>
-              <label
-                htmlFor="presentAddress"
-                className="block font-semibold text-base mb-2"
-              >
-                Present Address:
-              </label>
-              <textarea
-                id="presentAddress"
-                onChange={(e) => setPresentAddress(e.target.value)}
-                className="w-full border border-gray-300 rounded-md p-2"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="permanentAddress"
-                className="block font-semibold text-base mb-2"
-              >
-                Permanent Address:
-              </label>
-              <textarea
-                id="permanentAddress"
-                onChange={(e) => setPermanentAddress(e.target.value)}
-                className="w-full border border-gray-300 rounded-md p-2"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div>
-              <label
-                htmlFor="nid"
-                className="block font-semibold text-base mb-2"
-              >
-                NID Number:
-              </label>
-              <input
-                type="text"
-                id="nid"
-                onChange={(e) => setNid(e.target.value)}
-                className="w-full border border-gray-300 rounded-md p-2"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="mobile"
-                className="block font-semibold text-base mb-2"
-              >
-                Mobile No:
-              </label>
-              <input
-                type="text"
-                id="mobile"
-                onChange={(e) => setMobile(e.target.value)}
-                className="w-full border border-gray-300 rounded-md p-2"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div>
-              <label
-                htmlFor="guardianName"
-                className="block font-semibold text-base mb-2"
-              >
-                Local Guardian’s Name:
-              </label>
-              <input
-                type="text"
-                id="guardianName"
-                onChange={(e) => setGuardianName(e.target.value)}
-                className="w-full border border-gray-300 rounded-md p-2"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="dob"
-                className="block font-semibold text-base mb-2"
-              >
-                Date of Birth:
-              </label>
-              <input
-                type="date"
-                id="dob"
-                onChange={(e) => setDob(e.target.value)}
-                className="w-full border border-gray-300 rounded-md p-2"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
               <label
                 htmlFor="bloodGroup"
@@ -323,6 +310,7 @@ const Checkout = () => {
                 Blood Group:
               </label>
               <select
+                required
                 id="bloodGroup"
                 onChange={(e) => setBloodGroup(e.target.value)}
                 className="w-full border border-gray-300 rounded-md p-2"
@@ -340,6 +328,8 @@ const Checkout = () => {
                 <option value="O-">O-</option>
               </select>
             </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-1 mb-4">
             <div className="mb-4">
               <label
                 htmlFor="photo"
@@ -348,11 +338,12 @@ const Checkout = () => {
                 Upload Photo:
               </label>
               <input
+                required
                 type="file"
                 id="photo"
                 accept="image/*"
                 onChange={(e) => setPhotoFile(e.target.files[0])} // store the selected file
-                className="w-full border border-gray-300 rounded-md p-2"
+                className="w-full border border-gray-300 rounded-md py-10"
               />
             </div>
           </div>

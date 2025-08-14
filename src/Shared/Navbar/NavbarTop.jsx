@@ -12,7 +12,6 @@ import { CartContext } from "../../ContextAPIs/CartProvider";
 const NavbarTop = () => {
   const { open, setOpen, sidebarRef } = useContext(OrderContext);
   const { cart } = useContext(CartContext);
-  console.log(cart);
 
   const [isSmallScreen] = useSmallScreen();
   const axiosSecure = useAxiosSecure();
@@ -75,10 +74,12 @@ const NavbarTop = () => {
 
         <div className="flex flex-col items-center justify-center text-text_sm font-semibold relative group">
           <div className="flex items-center gap-8">
-            <div className="flex text-black text-lg items-center gap-2">
-              <FaCartPlus />
-              <span className="font-bold text-red-500">{cart.length}</span>
-            </div>
+            <Link to="/cart">
+              <div className="flex text-black text-xl items-center gap-2">
+                <FaCartPlus />
+                <span className="font-bold text-red-500">{cart.length}</span>
+              </div>
+            </Link>
             <h1 className="text-blue-500 text-xl font-medium">
               {userData?.userData.name}
             </h1>

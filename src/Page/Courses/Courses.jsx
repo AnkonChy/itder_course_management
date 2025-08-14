@@ -6,7 +6,7 @@ import { CartContext } from "../../ContextAPIs/CartProvider";
 const Courses = () => {
   const { courseData } = useLoaderData();
   const { addToCart } = useContext(CartContext);
-  console.log(courseData);
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 p-10 gap-6">
       {courseData.map((course) => (
